@@ -1,0 +1,48 @@
+version: "1"
+
+package:
+  id: io.github.openbbm
+  name: openbbm
+  version: 0.0.0.1
+  kind: app
+  description: |
+    BeatBuddy Manager
+
+command:
+  - /opt/apps/io.github.openbbm/files/bin/BBManagerLean
+
+base: org.deepin.foundation/23.0.0
+runtime: org.deepin.Runtime/23.0.1
+
+sources:
+  - kind: git
+    url: https://github.com/SingularSound/openbbm.git
+    version: master
+    commit: 133bb0b87d983df2c90ae15db155c8c70ba84f76
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/libq/libquazip/libquazip1_0.7.6-2_amd64.deb
+    digest: 86c7ef9b09a6b2d2d902bafcc9e821eb87c6d7e8948a4b7ec865c66b74c129d5
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/libm/libminini/libminini1_1.2.a+ds-1_amd64.deb
+    digest: 4e38ea853eb59cfbd648af493664d86f24355dfcbbddada792f3fe01822430d0
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/libm/libminini/libminini-dev_1.2.a+ds-1_amd64.deb
+    digest: 2405f14d8bc05993d0ef38c3b05a7df7ee0f0803a3320c659798699ef0d8b128
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/libq/libquazip/libquazip-dev_0.7.6-2_amd64.deb
+    digest: d553565c6ed7daa4f72a6a1ec3060ce413306967d34fc1d419e57bf40fb1c298
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/libq/libquazip/libquazip-headers_0.7.6-2_amd64.deb
+    digest: 19507ba31a0e132b2379f383c461c0faec9393476686b509f9f04e1f6573e5fd
+  - kind: file
+    url: http://security.debian.org/debian-security/pool/updates/main/q/qt4-x11/libqtcore4_4.8.7+dfsg-18+deb10u2_amd64.deb
+    digest: 748f37e445306cef45b653a81c81f9a8f5a177b631e8eb33bbf9f45e9f775d7c
+build: |
+  bash ./install_dep linglong/sources $PREFIX
+
+  cd /project/linglong/sources/openbbm.git
+  git apply ../../../0001-install.patch
+  qmake bbmanager.pro PREFIX=${PREFIX} LIB_INSTALL_DIR=${PREFIX}/lib/${TRIPLET}
+  make -j$(nproc)
+  make install
+
