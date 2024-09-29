@@ -1,0 +1,106 @@
+From 6c8b245ff1a45003b8d7b4d077fe6f7b9a0b370a Mon Sep 17 00:00:00 2001
+From: wjyrich <1071633242@qq.com>
+Date: Sun, 8 Sep 2024 14:36:57 +0800
+Subject: [PATCH] install
+
+---
+ BBManagerLean/BBManagerLean.pro                       |  9 ++++++++-
+ BBManagerLean/res/images/BBManagerLean.desktop        | 11 +++++++++++
+ .../src/model/filegraph/songtrackmetaitem.cpp         |  4 ++--
+ BBManagerLean/src/vm/vmscreen.cpp                     |  3 +--
+ bbmanager.pro                                         |  2 +-
+ 5 files changed, 23 insertions(+), 6 deletions(-)
+ create mode 100644 BBManagerLean/res/images/BBManagerLean.desktop
+
+diff --git a/BBManagerLean/BBManagerLean.pro b/BBManagerLean/BBManagerLean.pro
+index 77f9ac1..4cd6d6d 100644
+--- a/BBManagerLean/BBManagerLean.pro
++++ b/BBManagerLean/BBManagerLean.pro
+@@ -29,7 +29,7 @@ macx {
+    OBJECTIVE_SOURCES += ./src/platform/macosx/macosxplatform.mm
+ 
+ } else:linux {
+-    LIBS       += -lquazip -lminIni
++    LIBS       +=-L$$PREFIX/lib/x86_64-linux-gnu -lquazip -lminIni
+ } else:win32{
+    LIBS       += -L$$PWD/./libs/quazip/msvc_64/release/ -lquazip
+    LIBS       += -L$$PWD/./libs/minIni/msvc_64/release/ -lminIni
+@@ -314,3 +314,10 @@ RESOURCES += \
+ 
+ DEFINES+= MININI_ANSI
+ DEFINES+= QT_MESSAGELOGCONTEXT
++target.path = $$PREFIX/bin
++desktop.files = res/images/BBManagerLean.desktop
++desktop.path = $$PREFIX/share/applications/
++icons.path = $$PREFIX/share/icons/hicolor/apps/
++icons.files = res/images/App_Icon_64.png
++
++INSTALLS += target desktop icons
+\ No newline at end of file
+diff --git a/BBManagerLean/res/images/BBManagerLean.desktop b/BBManagerLean/res/images/BBManagerLean.desktop
+new file mode 100644
+index 0000000..3b5297e
+--- /dev/null
++++ b/BBManagerLean/res/images/BBManagerLean.desktop
+@@ -0,0 +1,11 @@
++[Desktop Entry]
++Categories=Accessibility;Qt;Utility;
++Exec=BBManagerLean
++Name=BBManagerLean
++Name[zh_CN]=BBManagerLean
++Icon=App_Icon_64
++StartupNotify=false
++Terminal=false
++Type=Application
++GenericName=BBManagerLean
++Version=1.0
+\ No newline at end of file
+diff --git a/BBManagerLean/src/model/filegraph/songtrackmetaitem.cpp b/BBManagerLean/src/model/filegraph/songtrackmetaitem.cpp
+index 41e064c..2435029 100644
+--- a/BBManagerLean/src/model/filegraph/songtrackmetaitem.cpp
++++ b/BBManagerLean/src/model/filegraph/songtrackmetaitem.cpp
+@@ -14,7 +14,7 @@
+ */
+ #include <QString>
+ #include <QStringList>
+-
++#include <cstring> 
+ #include "songtrackmetaitem.h"
+ #include "../../workspace/workspace.h"
+ #include "../../workspace/contentlibrary.h"
+@@ -29,7 +29,7 @@ SongTrackMetaItem::SongTrackMetaItem() :
+ #ifdef __clang__
+    uint8_t * end = (uint8_t *) memccpy(m_Data, data, 0, SONGFILE_MAX_TRACK_META_SIZE);
+ #else
+-   uint8_t * end = (uint8_t *) _memccpy(m_Data, data, 0, SONGFILE_MAX_TRACK_META_SIZE);
++   uint8_t * end = (uint8_t *) memccpy(m_Data, data, 0, SONGFILE_MAX_TRACK_META_SIZE);
+ #endif
+    m_InternalSize = end - m_Data;
+ }
+diff --git a/BBManagerLean/src/vm/vmscreen.cpp b/BBManagerLean/src/vm/vmscreen.cpp
+index ceaa7ee..a8b4b07 100644
+--- a/BBManagerLean/src/vm/vmscreen.cpp
++++ b/BBManagerLean/src/vm/vmscreen.cpp
+@@ -21,9 +21,8 @@
+ #include <QDebug>
+ #include <QStaticText>
+ #include <QtCore/qmath.h>
+-#ifdef Q_OS_MACX
+ #include <QPainterPath>
+-#endif
++
+ VMScreen::VMScreen(QWidget *parent) :
+    QWidget(parent)
+ {
+diff --git a/bbmanager.pro b/bbmanager.pro
+index 20f518d..df43a56 100644
+--- a/bbmanager.pro
++++ b/bbmanager.pro
+@@ -1,3 +1,3 @@
+ TEMPLATE = subdirs
+ SUBDIRS = BBManagerLean \
+-    bbmtest
++
+-- 
+2.43.4
+
